@@ -11,12 +11,17 @@ class Ticket {
   }
 
   static async findAll() {
+    console.log('Ticket.findAll: Fetching all tickets from Supabase');
     const { data, error } = await supabase
       .from('tickets')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Ticket.findAll: Supabase error:', error);
+      throw error;
+    }
+    console.log('Ticket.findAll: Retrieved', data.length, 'tickets');
     return data.map(ticket => new Ticket(ticket));
   }
 
@@ -41,6 +46,7 @@ class Ticket {
 
     if (this.id) {
       // Update existing ticket
+      console.log('Ticket.save: Updating ticket with ID:', this.id);
       const { data, error } = await supabase
         .from('tickets')
         .update(ticketData)
@@ -48,18 +54,27 @@ class Ticket {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Ticket.save: Update error:', error);
+        throw error;
+      }
+      console.log('Ticket.save: Updated ticket:', data);
       Object.assign(this, data);
     } else {
       // Create new ticket
       ticketData.created_at = new Date().toISOString();
+      console.log('Ticket.save: Creating new ticket:', ticketData);
       const { data, error } = await supabase
         .from('tickets')
         .insert(ticketData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Ticket.save: Insert error:', error);
+        throw error;
+      }
+      console.log('Ticket.save: Created ticket:', data);
       Object.assign(this, data);
     }
 
