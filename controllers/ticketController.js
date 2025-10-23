@@ -1,21 +1,10 @@
 const Ticket = require('../models/Ticket');
 
-// In-memory storage for testing (replace with database in production)
-let tickets = [
-  {
-    id: '1',
-    title: 'Sample Ticket 1',
-    description: 'This is a sample ticket',
-    status: 'open',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  }
-];
-
 const ticketController = {
   // Get all tickets
   async getAllTickets(req, res) {
     try {
+      const tickets = await Ticket.findAll();
       res.json(tickets);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -26,38 +15,41 @@ const ticketController = {
   async getTicketById(req, res) {
     try {
       const { id } = req.params;
-      const ticket = tickets.find(t => t.id === id);
-      if (!ticket) {
-        return res.status(404).json({ error: 'Ticket not found' });
-      }
+      const ticket = await Ticket.findById(id);
       res.json(ticket);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      if (error.code === 'PGRST116') {
+        res.status(404).json({ error: 'Ticket not found' });
+      } else {
+        res.status(500).json({ error: error.message });
+      }
     }
   },
 
   // Create a new ticket
   async createTicket(req, res) {
     try {
-      const { title, description, status } = req.body;
+      const { title, type, description, iduser, affectdate, assignedagent, priority, difficulty, status } = req.body;
 
-      if (!title || !description) {
-        return res.status(400).json({ error: 'Title and description are required' });
+      if (!title || !description || !iduser) {
+        return res.status(400).json({ error: 'Title, description, and iduser are required' });
       }
 
-      const newTicket = {
-        id: Date.now().toString(),
+      const ticket = new Ticket({
         title,
+        type,
         description,
-        status: status || 'open',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      await  new Ticket(newTicket).save()
-      tickets.push(newTicket);
-      res.status(201).json(newTicket);
+        iduser,
+        publishdate: new Date().toISOString(),
+        affectdate,
+        assignedagent,
+        priority: priority || 'medium',
+        difficulty: difficulty || 'medium',
+        status: status || 'open'
+      });
+      const savedTicket = await ticket.save();
+      res.status(201).json(savedTicket);
     } catch (error) {
-      console.error('Create ticket error:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -66,24 +58,28 @@ const ticketController = {
   async updateTicket(req, res) {
     try {
       const { id } = req.params;
-      const { title, description, status } = req.body;
+      const { title, type, description, iduser, affectdate, resolvedate, assignedagent, priority, difficulty, status } = req.body;
 
-      const ticketIndex = tickets.findIndex(t => t.id === id);
-      if (ticketIndex === -1) {
-        return res.status(404).json({ error: 'Ticket not found' });
-      }
+      const ticket = await Ticket.findById(id);
+      ticket.title = title || ticket.title;
+      ticket.type = type || ticket.type;
+      ticket.description = description || ticket.description;
+      ticket.iduser = iduser || ticket.iduser;
+      ticket.affectdate = affectdate || ticket.affectdate;
+      ticket.resolvedate = resolvedate || ticket.resolvedate;
+      ticket.assignedagent = assignedagent || ticket.assignedagent;
+      ticket.priority = priority || ticket.priority;
+      ticket.difficulty = difficulty || ticket.difficulty;
+      ticket.status = status || ticket.status;
 
-      tickets[ticketIndex] = {
-        ...tickets[ticketIndex],
-        title: title || tickets[ticketIndex].title,
-        description: description || tickets[ticketIndex].description,
-        status: status || tickets[ticketIndex].status,
-        updated_at: new Date().toISOString()
-      };
-
-      res.json(tickets[ticketIndex]);
+      const updatedTicket = await ticket.save();
+      res.json(updatedTicket);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      if (error.code === 'PGRST116') {
+        res.status(404).json({ error: 'Ticket not found' });
+      } else {
+        res.status(500).json({ error: error.message });
+      }
     }
   },
 
@@ -91,15 +87,15 @@ const ticketController = {
   async deleteTicket(req, res) {
     try {
       const { id } = req.params;
-      const ticketIndex = tickets.findIndex(t => t.id === id);
-      if (ticketIndex === -1) {
-        return res.status(404).json({ error: 'Ticket not found' });
-      }
-
-      tickets.splice(ticketIndex, 1);
+      const ticket = await Ticket.findById(id);
+      await ticket.delete();
       res.json({ message: 'Ticket deleted successfully' });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      if (error.code === 'PGRST116') {
+        res.status(404).json({ error: 'Ticket not found' });
+      } else {
+        res.status(500).json({ error: error.message });
+      }
     }
   }
 };

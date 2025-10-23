@@ -4,7 +4,15 @@ class Ticket {
   constructor(data) {
     this.id = data.id;
     this.title = data.title;
+    this.type = data.type;
     this.description = data.description;
+    this.iduser = data.iduser;
+    this.publishdate = data.publishdate;
+    this.affectdate = data.affectdate;
+    this.resolvedate = data.resolvedate;
+    this.assignedagent = data.assignedagent;
+    this.priority = data.priority || 'medium';
+    this.difficulty = data.difficulty || 'medium';
     this.status = data.status || 'open';
     this.created_at = data.created_at;
     this.updated_at = data.updated_at;
@@ -39,7 +47,15 @@ class Ticket {
   async save() {
     const ticketData = {
       title: this.title,
+      type: this.type,
       description: this.description,
+      iduser: this.iduser,
+      publishdate: this.publishdate,
+      affectdate: this.affectdate,
+      resolvedate: this.resolvedate,
+      assignedagent: this.assignedagent,
+      priority: this.priority,
+      difficulty: this.difficulty,
       status: this.status,
       updated_at: new Date().toISOString()
     };

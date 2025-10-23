@@ -16,13 +16,12 @@ const userController = {
     try {
       const { id } = req.params;
       const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
       res.json(user);
     } catch (error) {
-      if (error.code === 'PGRST116') {
-        res.status(404).json({ error: 'User not found' });
-      } else {
-        res.status(500).json({ error: error.message });
-      }
+      res.status(500).json({ error: error.message });
     }
   },
 
@@ -96,6 +95,9 @@ const userController = {
       const updateData = req.body;
 
       const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
 
       // Update only provided fields
       Object.keys(updateData).forEach(key => {
@@ -107,11 +109,7 @@ const userController = {
       const updatedUser = await user.save();
       res.json(updatedUser);
     } catch (error) {
-      if (error.code === 'PGRST116') {
-        res.status(404).json({ error: 'User not found' });
-      } else {
-        res.status(500).json({ error: error.message });
-      }
+      res.status(500).json({ error: error.message });
     }
   },
 
@@ -120,14 +118,67 @@ const userController = {
     try {
       const { id } = req.params;
       const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
       await user.delete();
       res.json({ message: 'User deleted successfully' });
     } catch (error) {
-      if (error.code === 'PGRST116') {
-        res.status(404).json({ error: 'User not found' });
-      } else {
-        res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Get roles for a user
+  async getUserRoles(req, res) {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
       }
+      const roles = await user.getRoles();
+      res.json(roles);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Assign role to user
+  async assignRoleToUser(req, res) {
+    try {
+      const { id } = req.params;
+      const { roleId } = req.body;
+
+      if (!roleId) {
+        return res.status(400).json({ error: 'Role ID is required' });
+      }
+
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await user.assignRole(roleId);
+      res.json({ message: 'Role assigned successfully' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Remove role from user
+  async removeRoleFromUser(req, res) {
+    try {
+      const { id, roleId } = req.params;
+
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      await user.removeRole(roleId);
+      res.json({ message: 'Role removed successfully' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 };

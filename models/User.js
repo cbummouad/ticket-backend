@@ -142,6 +142,50 @@ class User {
     }
     console.log('User.delete: User deleted successfully');
   }
+
+  // Get roles for this user
+  async getRoles() {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select(`
+        roles (
+          id,
+          name,
+          slug,
+          created_at,
+          updated_at
+        )
+      `)
+      .eq('id_user', this.id);
+
+    if (error) throw error;
+    return data.map(item => item.roles);
+  }
+
+  // Assign a role to this user
+  async assignRole(roleId) {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .insert({
+        id_user: this.id,
+        id_role: roleId
+      })
+      .select();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Remove a role from this user
+  async removeRole(roleId) {
+    const { error } = await supabase
+      .from('user_roles')
+      .delete()
+      .eq('id_user', this.id)
+      .eq('id_role', roleId);
+
+    if (error) throw error;
+  }
 }
 
 module.exports = User;

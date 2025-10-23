@@ -21,4 +21,13 @@ router.put('/:id', userController.updateUser);
 // DELETE /api/users/:id - Delete a user
 router.delete('/:id', userController.deleteUser);
 
+// GET /api/users/:id/roles - Get roles for a user
+router.get('/:id/roles', userController.getUserRoles);
+
+// POST /api/users/:id/roles - Assign role to user
+router.post('/:id/roles', userController.assignRoleToUser);
+
+// DELETE /api/users/:id/roles/:roleId - Remove role from user
+router.delete('/:id/roles/:roleId', userController.removeRoleFromUser);
+
 module.exports = router;
