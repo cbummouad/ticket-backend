@@ -7,3 +7,4 @@
 - [x] Add Swagger documentation for user routes
 - [x] Add Swagger documentation for role routes
 - [x] Test Swagger UI accessibility
+- [x] Fix Swagger UI for Vercel deployment using CDN

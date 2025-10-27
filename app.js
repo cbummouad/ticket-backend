@@ -151,7 +151,7 @@ app.get('/api-docs', (req, res) => {
   <script>
     window.onload = function() {
       const ui = SwaggerUIBundle({
-        url: '/api-docs.json',
+        spec: ${JSON.stringify(swaggerSpec)},
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
