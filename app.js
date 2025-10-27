@@ -123,6 +123,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Swagger UI with CDN
 app.get('/api-docs', (req, res) => {
+  res.setHeader('Content-Type', 'text/html');
   res.send(`
 <!DOCTYPE html>
 <html>
