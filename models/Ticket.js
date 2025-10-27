@@ -22,7 +22,43 @@ class Ticket {
     console.log('Ticket.findAll: Fetching all tickets from Supabase');
     const { data, error } = await supabase
       .from('tickets')
-      .select('*')
+      .select(`
+        *,
+        creator:users!tickets_iduser_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        ),
+        agent:users!tickets_assignedagent_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        )
+      `)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -30,18 +66,62 @@ class Ticket {
       throw error;
     }
     console.log('Ticket.findAll: Retrieved', data.length, 'tickets');
-    return data.map(ticket => new Ticket(ticket));
+    return data.map(ticket => ({
+      ...new Ticket(ticket),
+      user: ticket.creator,
+      agent: ticket.agent
+    }));
   }
 
   static async findById(id) {
     const { data, error } = await supabase
       .from('tickets')
-      .select('*')
+      .select(`
+        *,
+        creator:users!tickets_iduser_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        ),
+        agent:users!tickets_assignedagent_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        )
+      `)
       .eq('id', id)
       .single();
 
     if (error) throw error;
-    return new Ticket(data);
+    return {
+      ...new Ticket(data),
+      user: data.creator,
+      agent: data.agent
+    };
   }
 
   async save() {

@@ -78,6 +78,8 @@ const swaggerOptions = {
             status: { type: 'string', enum: ['open', 'in_progress', 'resolved', 'closed'] },
             created_at: { type: 'string', format: 'date-time' },
             updated_at: { type: 'string', format: 'date-time' },
+            user: { $ref: '#/components/schemas/User' },
+            agent: { $ref: '#/components/schemas/User' },
           },
         },
         Role: {
