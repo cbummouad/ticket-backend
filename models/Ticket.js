@@ -124,6 +124,118 @@ class Ticket {
     };
   }
 
+  static async findByUserId(userId) {
+    console.log('Ticket.findByUserId: Fetching tickets for user:', userId);
+    const { data, error } = await supabase
+      .from('tickets')
+      .select(`
+        *,
+        creator:users!tickets_iduser_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        ),
+        agent:users!tickets_assignedagent_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        )
+      `)
+      .eq('iduser', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Ticket.findByUserId: Supabase error:', error);
+      throw error;
+    }
+    console.log('Ticket.findByUserId: Retrieved', data.length, 'tickets for user');
+    return data.map(ticket => ({
+      ...new Ticket(ticket),
+      user: ticket.creator,
+      agent: ticket.agent
+    }));
+  }
+
+  static async findByAssignedAgent(agentId) {
+    console.log('Ticket.findByAssignedAgent: Fetching tickets assigned to agent:', agentId);
+    const { data, error } = await supabase
+      .from('tickets')
+      .select(`
+        *,
+        creator:users!tickets_iduser_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        ),
+        agent:users!tickets_assignedagent_fkey (
+          id,
+          email,
+          name,
+          statut,
+          phone,
+          address,
+          geocode,
+          infos,
+          solde_actuelle,
+          solde_autorise,
+          qr_code,
+          id_rpp,
+          code_user,
+          image,
+          schema
+        )
+      `)
+      .eq('assignedagent', agentId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Ticket.findByAssignedAgent: Supabase error:', error);
+      throw error;
+    }
+    console.log('Ticket.findByAssignedAgent: Retrieved', data.length, 'tickets for agent');
+    return data.map(ticket => ({
+      ...new Ticket(ticket),
+      user: ticket.creator,
+      agent: ticket.agent
+    }));
+  }
+
   async save() {
     const ticketData = {
       title: this.title,

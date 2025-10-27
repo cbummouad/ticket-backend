@@ -11,6 +11,28 @@ const ticketController = {
     }
   },
 
+  // Get tickets by user ID
+  async getTicketsByUser(req, res) {
+    try {
+      const { userId } = req.params;
+      const tickets = await Ticket.findByUserId(userId);
+      res.json(tickets);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Get tickets assigned to an agent
+  async getTicketsByAgent(req, res) {
+    try {
+      const { agentId } = req.params;
+      const tickets = await Ticket.findByAssignedAgent(agentId);
+      res.json(tickets);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   // Get a single ticket by ID
   async getTicketById(req, res) {
     try {

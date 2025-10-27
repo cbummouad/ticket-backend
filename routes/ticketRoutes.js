@@ -51,6 +51,86 @@ router.get('/', auth, ticketController.getAllTickets);
 
 /**
  * @swagger
+ * /api/tickets/user/{userId}:
+ *   get:
+ *     summary: Get all tickets for a specific user
+ *     tags: [Tickets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: List of user's tickets retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Ticket'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/user/:userId', auth, ticketController.getTicketsByUser);
+
+/**
+ * @swagger
+ * /api/tickets/agent/{agentId}:
+ *   get:
+ *     summary: Get all tickets assigned to a specific agent
+ *     tags: [Tickets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: agentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Agent ID
+ *     responses:
+ *       200:
+ *         description: List of agent's assigned tickets retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Ticket'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/agent/:agentId', auth, ticketController.getTicketsByAgent);
+
+/**
+ * @swagger
  * /api/tickets/{id}:
  *   get:
  *     summary: Get a single ticket by ID
