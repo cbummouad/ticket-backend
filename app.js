@@ -129,7 +129,7 @@ app.get('/api-docs', (req, res) => {
 <html>
 <head>
   <title>Swagger UI</title>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.3/swagger-ui.css" />
   <style>
     html {
       box-sizing: border-box;
@@ -147,8 +147,8 @@ app.get('/api-docs', (req, res) => {
 </head>
 <body>
   <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-bundle.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui-standalone-preset.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.3/swagger-ui-bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.3/swagger-ui-standalone-preset.js"></script>
   <script>
     window.onload = function() {
       const ui = SwaggerUIBundle({
