@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
 const User = require('../models/User');
+const UserRole = require('../models/UserRole');
 
 const authController = {
   // Register a new user
@@ -93,6 +94,9 @@ const authController = {
       //   return res.status(401).json({ error: 'Invalid credentials' });
       // }
 
+      // Get user roles
+      const roles = await user.getRoles();
+
       // Generate JWT token
       const token = jwt.sign(
         { sub: user.id, email: user.email },
@@ -102,6 +106,7 @@ const authController = {
 
       res.json({
         user: user,
+        roles: roles,
         token,
         message: 'Login successful'
       });
