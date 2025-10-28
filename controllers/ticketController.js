@@ -82,17 +82,18 @@ const ticketController = {
       const { id } = req.params;
       const { title, type, description, iduser, affectdate, resolvedate, assignedagent, priority, difficulty, status } = req.body;
 
-      const ticket = await Ticket.findById(id);
-      ticket.title = title || ticket.title;
-      ticket.type = type || ticket.type;
-      ticket.description = description || ticket.description;
-      ticket.iduser = iduser || ticket.iduser;
-      ticket.affectdate = affectdate || ticket.affectdate;
-      ticket.resolvedate = resolvedate || ticket.resolvedate;
-      ticket.assignedagent = assignedagent || ticket.assignedagent;
-      ticket.priority = priority || ticket.priority;
-      ticket.difficulty = difficulty || ticket.difficulty;
-      ticket.status = status || ticket.status;
+      const ticketData = await Ticket.findById(id);
+      const ticket = new Ticket(ticketData);
+      ticket.title = title !== undefined ? title : ticket.title;
+      ticket.type = type !== undefined ? type : ticket.type;
+      ticket.description = description !== undefined ? description : ticket.description;
+      ticket.iduser = iduser !== undefined ? iduser : ticket.iduser;
+      ticket.affectdate = affectdate !== undefined ? affectdate : ticket.affectdate;
+      ticket.resolvedate = resolvedate !== undefined ? resolvedate : ticket.resolvedate;
+      ticket.assignedagent = assignedagent !== undefined ? assignedagent : ticket.assignedagent;
+      ticket.priority = priority !== undefined ? priority : ticket.priority;
+      ticket.difficulty = difficulty !== undefined ? difficulty : ticket.difficulty;
+      ticket.status = status !== undefined ? status : ticket.status;
 
       const updatedTicket = await ticket.save();
       res.json(updatedTicket);
