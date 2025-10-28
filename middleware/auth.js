@@ -35,7 +35,7 @@ const requireAdmin = async (req, res, next) => {
 
     // Check if user has admin role
     const userRoles = await UserRole.findByUserId(req.user.id);
-    const hasAdminRole = userRoles.some(role => role.name.toLowerCase() === 'admin');
+    const hasAdminRole = userRoles.some(userRole => userRole.role && userRole.role.name && userRole.role.name.toLowerCase() === 'admin');
 
     if (!hasAdminRole) {
       return res.status(403).json({ error: 'Admin access required.' });
