@@ -1,6 +1,6 @@
 const express = require('express');
 const ticketController = require('../controllers/ticketController');
-const auth = require('../middleware/auth');
+const { auth, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -365,5 +365,80 @@ router.put('/:id', auth, ticketController.updateTicket);
  *               $ref: '#/components/schemas/Error'
  */
 router.delete('/:id', auth, ticketController.deleteTicket);
+
+/**
+ * @swagger
+ * /api/tickets/{id}/assign:
+ *   put:
+ *     summary: Assign ticket to an agent (Admin only)
+ *     tags: [Tickets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Ticket ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - agentId
+ *             properties:
+ *               agentId:
+ *                 type: string
+ *                 format: uuid
+ *                 description: Agent ID to assign the ticket to
+ *     responses:
+ *       200:
+ *         description: Ticket assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Ticket assigned successfully"
+ *                 ticket:
+ *                   $ref: '#/components/schemas/Ticket'
+ *       400:
+ *         description: Bad request - missing agentId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden - admin access required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Ticket not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.put('/:id/assign', auth, requireAdmin, ticketController.assignTicket);
 
 module.exports = router;

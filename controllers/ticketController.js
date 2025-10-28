@@ -119,6 +119,45 @@ const ticketController = {
         res.status(500).json({ error: error.message });
       }
     }
+  },
+
+  // Assign ticket to an agent (admin only)
+  async assignTicket(req, res) {
+    try {
+      const { id } = req.params;
+      const { agentId } = req.body;
+
+      if (!agentId) {
+        return res.status(400).json({ error: 'Agent ID is required' });
+      }
+
+      // Find the ticket
+      const ticket = await Ticket.findById(id);
+      if (!ticket) {
+        return res.status(404).json({ error: 'Ticket not found' });
+      }
+
+      // Update the ticket assignment
+      const updatedTicketData = {
+        ...ticket,
+        assignedagent: agentId,
+        affectdate: new Date().toISOString() // Set assignment date
+      };
+
+      const ticketToUpdate = new Ticket(updatedTicketData);
+      await ticketToUpdate.save();
+
+      // Fetch the updated ticket with user/agent data
+      const updatedTicket = await Ticket.findById(id);
+
+      res.json({
+        message: 'Ticket assigned successfully',
+        ticket: updatedTicket
+      });
+    } catch (error) {
+      console.error('Error assigning ticket:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 };
 

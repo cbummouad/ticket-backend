@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
+const UserRole = require('../models/UserRole');
 
 const auth = async (req, res, next) => {
   try {
@@ -25,4 +26,26 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+// Middleware to check if user has admin role
+const requireAdmin = async (req, res, next) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+
+    // Check if user has admin role
+    const userRoles = await UserRole.findByUserId(req.user.id);
+    const hasAdminRole = userRoles.some(role => role.name.toLowerCase() === 'admin');
+
+    if (!hasAdminRole) {
+      return res.status(403).json({ error: 'Admin access required.' });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error checking admin role:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+module.exports = { auth, requireAdmin };
