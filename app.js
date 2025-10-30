@@ -132,10 +132,10 @@ app.get('/api-docs.json', (req, res) => {
 });
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/roles', roleRoutes);
+app.use('/auth', authRoutes);
+app.use('/tickets', ticketRoutes);
+app.use('/users', userRoutes);
+app.use('/roles', roleRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

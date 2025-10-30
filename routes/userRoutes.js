@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/users:
+ * /users:
  *   get:
  *     summary: Get all users
  *     tags: [Users]
@@ -38,7 +38,7 @@ router.get('/', auth, userController.getAllUsers);
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   get:
  *     summary: Get a single user by ID
  *     tags: [Users]
@@ -82,7 +82,7 @@ router.get('/:id', auth, userController.getUserById);
 
 /**
  * @swagger
- * /api/users/email/{email}:
+ * /users/email/{email}:
  *   get:
  *     summary: Get user by email
  *     tags: [Users]
@@ -126,7 +126,7 @@ router.get('/email/:email', auth, userController.getUserByEmail);
 
 /**
  * @swagger
- * /api/users:
+ * /users:
  *   post:
  *     summary: Create a new user
  *     tags: [Users]
@@ -215,7 +215,7 @@ router.post('/', auth, userController.createUser);
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   put:
  *     summary: Update an existing user
  *     tags: [Users]
@@ -315,7 +315,7 @@ router.put('/:id', auth, userController.updateUser);
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /users/{id}:
  *   delete:
  *     summary: Delete a user
  *     tags: [Users]
@@ -363,7 +363,7 @@ router.delete('/:id', auth, userController.deleteUser);
 
 /**
  * @swagger
- * /api/users/{id}/roles:
+ * /users/{id}/roles:
  *   get:
  *     summary: Get roles for a user
  *     tags: [Users]
@@ -409,7 +409,7 @@ router.get('/:id/roles', auth, userController.getUserRoles);
 
 /**
  * @swagger
- * /api/users/{id}/roles:
+ * /users/{id}/roles:
  *   post:
  *     summary: Assign role to user
  *     tags: [Users]
@@ -476,7 +476,7 @@ router.post('/:id/roles', auth, userController.assignRoleToUser);
 
 /**
  * @swagger
- * /api/users/{id}/roles/{roleId}:
+ * /users/{id}/roles/{roleId}:
  *   delete:
  *     summary: Remove role from user
  *     tags: [Users]

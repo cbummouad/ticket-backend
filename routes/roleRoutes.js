@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/roles:
+ * /roles:
  *   get:
  *     summary: Get all roles
  *     tags: [Roles]
@@ -38,7 +38,7 @@ router.get('/', auth, roleController.getAllRoles);
 
 /**
  * @swagger
- * /api/roles/{id}:
+ * /roles/{id}:
  *   get:
  *     summary: Get a single role by ID
  *     tags: [Roles]
@@ -82,7 +82,7 @@ router.get('/:id', auth, roleController.getRoleById);
 
 /**
  * @swagger
- * /api/roles/slug/{slug}:
+ * /roles/slug/{slug}:
  *   get:
  *     summary: Get role by slug
  *     tags: [Roles]
@@ -125,7 +125,7 @@ router.get('/slug/:slug', auth, roleController.getRoleBySlug);
 
 /**
  * @swagger
- * /api/roles:
+ * /roles:
  *   post:
  *     summary: Create a new role
  *     tags: [Roles]
@@ -176,7 +176,7 @@ router.post('/', auth, roleController.createRole);
 
 /**
  * @swagger
- * /api/roles/{id}:
+ * /roles/{id}:
  *   put:
  *     summary: Update an existing role
  *     tags: [Roles]
@@ -239,7 +239,7 @@ router.put('/:id', auth, roleController.updateRole);
 
 /**
  * @swagger
- * /api/roles/{id}:
+ * /roles/{id}:
  *   delete:
  *     summary: Delete a role
  *     tags: [Roles]
@@ -287,7 +287,7 @@ router.delete('/:id', auth, roleController.deleteRole);
 
 /**
  * @swagger
- * /api/roles/{id}/users:
+ * /roles/{id}/users:
  *   get:
  *     summary: Get users with a specific role
  *     tags: [Roles]
@@ -333,7 +333,7 @@ router.get('/:id/users', auth, roleController.getUsersWithRole);
 
 /**
  * @swagger
- * /api/roles/assign:
+ * /roles/assign:
  *   post:
  *     summary: Assign role to user
  *     tags: [Roles]
@@ -397,7 +397,7 @@ router.post('/assign', auth, roleController.assignRoleToUser);
 
 /**
  * @swagger
- * /api/roles/remove:
+ * /roles/remove:
  *   post:
  *     summary: Remove role from user
  *     tags: [Roles]
@@ -461,7 +461,7 @@ router.post('/remove', auth, roleController.removeRoleFromUser);
 
 /**
  * @swagger
- * /api/roles/user/{userId}:
+ * /roles/user/{userId}:
  *   get:
  *     summary: Get roles for a user
  *     tags: [Roles]

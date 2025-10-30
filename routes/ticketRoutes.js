@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/tickets:
+ * /tickets:
  *   get:
  *     summary: Get all tickets
  *     tags: [Tickets]
@@ -51,7 +51,7 @@ router.get('/', auth, ticketController.getAllTickets);
 
 /**
  * @swagger
- * /api/tickets/user/{userId}:
+ * /tickets/user/{userId}:
  *   get:
  *     summary: Get all tickets for a specific user
  *     tags: [Tickets]
@@ -91,7 +91,7 @@ router.get('/user/:userId', auth, ticketController.getTicketsByUser);
 
 /**
  * @swagger
- * /api/tickets/agent/{agentId}:
+ * /tickets/agent/{agentId}:
  *   get:
  *     summary: Get all tickets assigned to a specific agent
  *     tags: [Tickets]
@@ -131,7 +131,7 @@ router.get('/agent/:agentId', auth, ticketController.getTicketsByAgent);
 
 /**
  * @swagger
- * /api/tickets/{id}:
+ * /tickets/{id}:
  *   get:
  *     summary: Get a single ticket by ID
  *     tags: [Tickets]
@@ -175,7 +175,7 @@ router.get('/:id', auth, ticketController.getTicketById);
 
 /**
  * @swagger
- * /api/tickets:
+ * /tickets:
  *   post:
  *     summary: Create a new ticket
  *     tags: [Tickets]
@@ -242,7 +242,7 @@ router.post('/', auth, ticketController.createTicket);
 
 /**
  * @swagger
- * /api/tickets/{id}:
+ * /tickets/{id}:
  *   put:
  *     summary: Update an existing ticket
  *     tags: [Tickets]
@@ -320,7 +320,7 @@ router.put('/:id', auth, ticketController.updateTicket);
 
 /**
  * @swagger
- * /api/tickets/{id}:
+ * /tickets/{id}:
  *   delete:
  *     summary: Delete a ticket
  *     tags: [Tickets]
@@ -368,7 +368,7 @@ router.delete('/:id', auth, ticketController.deleteTicket);
 
 /**
  * @swagger
- * /api/tickets/{id}/assign:
+ * /tickets/{id}/assign:
  *   put:
  *     summary: Assign ticket to an agent (Admin only)
  *     tags: [Tickets]
