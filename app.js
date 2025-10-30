@@ -75,7 +75,8 @@ const AllowedCors = ['http://localhost:5173', 'https://ticket-backend-sepia.verc
 app.use(cors(
 
   {
-    origin : AllowedCors
+    origin : AllowedCors,
+    credentials : true,
   })
 );
 app.use(express.json({ limit: '10mb' })); // Increase payload size limit for file uploads
