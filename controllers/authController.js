@@ -1,5 +1,3 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
 const User = require('../models/User');
 const UserRole = require('../models/UserRole');
@@ -30,16 +28,23 @@ const authController = {
         return res.status(400).json({ error: 'Email, password, and name are required' });
       }
 
-      // Check if user already exists
-      try {
-        await User.findByEmail(email);
-        return res.status(400).json({ error: 'User with this email already exists' });
-      } catch (error) {
-        // User doesn't exist, continue with registration
+      // Sign up with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) {
+        return res.status(400).json({ error: authError.message });
       }
 
-      // Create user in our users table
+      if (!authData.user) {
+        return res.status(400).json({ error: 'Failed to create user account' });
+      }
+
+      // Create user in our local users table
       const user = new User({
+        id: authData.user.id, // Use Supabase user ID
         email,
         name,
         statut,
@@ -58,16 +63,9 @@ const authController = {
 
       const savedUser = await user.save();
 
-      // Generate JWT token
-      const token = jwt.sign(
-        { sub: savedUser.id, email: savedUser.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
       res.status(201).json({
         user: savedUser,
-        token,
+        session: authData.session,
         message: 'User registered successfully'
       });
     } catch (error) {
@@ -84,38 +82,34 @@ const authController = {
         return res.status(400).json({ error: 'Email and password are required' });
       }
 
-      // Find user by email
-      const user = await User.findByEmail(email);
+      // Sign in with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      // For now, we'll skip password verification for testing
-      // In production, you should hash and verify passwords
-      // const isValidPassword = await bcrypt.compare(password, user.password);
-      // if (!isValidPassword) {
-      //   return res.status(401).json({ error: 'Invalid credentials' });
-      // }
+      if (authError) {
+        return res.status(401).json({ error: authError.message });
+      }
+
+      // Get user from local users table
+      const user = await User.findById(authData.user.id);
+
+      if (!user) {
+        return res.status(404).json({ error: 'User profile not found' });
+      }
 
       // Get user roles
       const roles = await user.getRoles();
 
-      // Generate JWT token
-      const token = jwt.sign(
-        { sub: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
       res.json({
         user: user,
         roles: roles,
-        token,
+        session: authData.session,
         message: 'Login successful'
       });
     } catch (error) {
-      if (error.code === 'PGRST116') {
-        res.status(401).json({ error: 'Invalid credentials' });
-      } else {
-        res.status(500).json({ error: error.message });
-      }
+      res.status(500).json({ error: error.message });
     }
   },
 

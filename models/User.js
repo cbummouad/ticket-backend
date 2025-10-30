@@ -73,6 +73,7 @@ class User {
 
   async save() {
     const userData = {
+      id: this.id,
       email: this.email,
       name: this.name,
       statut: this.statut,
@@ -87,60 +88,41 @@ class User {
       isdeleted: this.isdeleted,
       code_user: this.code_user,
       image: this.image,
-      schema: this.schema
+      schema: this.schema,
+      created_at: this.id ? undefined : new Date().toISOString() // Only set created_at on insert
     };
 
-    if (this.id) {
-      // Update existing user
-      console.log('User.save: Updating user with ID:', this.id);
-      const { data, error } = await supabase
-        .from('users')
-        .update(userData)
-        .eq('id', this.id)
-        .select()
-        .single();
+    console.log('User.save: Upserting user:', userData);
+    const { data, error } = await supabase
+      .from('users')
+      .upsert(userData)
+      .select()
+      .single();
 
-      if (error) {
-        console.error('User.save: Update error:', error);
-        throw error;
-      }
-      console.log('User.save: Updated user:', data);
-      Object.assign(this, data);
-    } else {
-      // Create new user
-      userData.created_at = new Date().toISOString();
-      console.log('User.save: Creating new user:', userData);
-      const { data, error } = await supabase
-        .from('users')
-        .insert(userData)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('User.save: Insert error:', error);
-        throw error;
-      }
-      console.log('User.save: Created user:', data);
-      Object.assign(this, data);
+    if (error) {
+      console.error('User.save: Upsert error:', error);
+      throw error;
     }
+    console.log('User.save: Upserted user:', data);
+    Object.assign(this, data);
 
     return this;
   }
 
-  async delete() {
+  async deleteUser() {
     if (!this.id) throw new Error('Cannot delete user without ID');
 
-    console.log('User.delete: Deleting user with ID:', this.id);
+    console.log('User.deleteUser: Deleting user with ID:', this.id);
     const { error } = await supabase
       .from('users')
       .delete()
       .eq('id', this.id);
 
     if (error) {
-      console.error('User.delete: Delete error:', error);
+      console.error('User.deleteUser: Delete error:', error);
       throw error;
     }
-    console.log('User.delete: User deleted successfully');
+    console.log('User.deleteUser: User deleted successfully');
   }
 
   // Get roles for this user

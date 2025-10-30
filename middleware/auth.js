@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
 const UserRole = require('../models/UserRole');
 
@@ -10,14 +9,16 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
 
-    // Verify the JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Verify the Supabase session token
+    const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    // For now, just set the user from the decoded token
-    // In production, you might want to validate against Supabase or a database
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid token.' });
+    }
+
     req.user = {
-      id: decoded.sub,
-      email: decoded.email
+      id: user.id,
+      email: user.email
     };
 
     next();

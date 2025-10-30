@@ -1,10 +1,10 @@
-# TODO List for Adding Swagger Documentation
+# Integration of Supabase Auth with Local User Model Sync
 
-- [x] Install Swagger dependencies (swagger-ui-express, swagger-jsdoc)
-- [x] Configure Swagger in app.js
-- [x] Add Swagger documentation for auth routes (register, login)
-- [x] Add Swagger documentation for ticket routes (CRUD operations)
-- [x] Add Swagger documentation for user routes
-- [x] Add Swagger documentation for role routes
-- [x] Test Swagger UI accessibility
-- [x] Fix Swagger UI for Vercel deployment using CDN
+## Tasks
+- [x] Update authController.js: Modify register to use supabase.auth.signUp() and sync to local 'users' table
+- [x] Update authController.js: Modify login to use supabase.auth.signInWithPassword() and return session token
+- [x] Update authController.js: Ensure logout uses Supabase signOut
+- [x] Update middleware/auth.js: Replace JWT verification with Supabase session check
+- [x] Verify User model handles Supabase user ID correctly
+- [x] Remove unused bcrypt and jwt dependencies if no longer needed
+- [x] Test the authentication flow
