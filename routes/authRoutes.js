@@ -6,6 +6,67 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         email:
+ *           type: string
+ *           format: email
+ *         name:
+ *           type: string
+ *         statut:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         address:
+ *           type: string
+ *         geocode:
+ *           type: string
+ *         infos:
+ *           type: string
+ *         solde_actuelle:
+ *           type: number
+ *         solde_autorise:
+ *           type: number
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *         qr_code:
+ *           type: string
+ *         id_rpp:
+ *           type: string
+ *         isdeleted:
+ *           type: boolean
+ *         code_user:
+ *           type: string
+ *         image:
+ *           type: string
+ *         schema:
+ *           type: string
+ *     AuthResponse:
+ *       type: object
+ *       properties:
+ *         user:
+ *           $ref: '#/components/schemas/User'
+ *         session:
+ *           type: object
+ *           properties:
+ *             access_token:
+ *               type: string
+ *             refresh_token:
+ *               type: string
+ *             expires_at:
+ *               type: number
+ *             user:
+ *               $ref: '#/components/schemas/User'
+ *         message:
+ *           type: string
+ *
  * /auth/register:
  *   post:
  *     summary: Register a new user

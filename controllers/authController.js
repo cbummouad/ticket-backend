@@ -116,12 +116,12 @@ const authController = {
   // Get current user profile
   async getProfile(req, res) {
     try {
-      const userId = req.user.sub;
+      const userId = req.user.id;
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-      res.json({ user });
+      res.json(user);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

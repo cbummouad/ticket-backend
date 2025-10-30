@@ -39,66 +39,6 @@ const swaggerOptions = {
         },
       },
       schemas: {
-        User: {
-          type: 'object',
-          properties: {
-            id: { type: 'string', format: 'uuid' },
-            email: { type: 'string', format: 'email' },
-            name: { type: 'string' },
-            statut: { type: 'string' },
-            phone: { type: 'string' },
-            address: { type: 'string' },
-            geocode: { type: 'string' },
-            infos: { type: 'string' },
-            solde_actuelle: { type: 'number' },
-            solde_autorise: { type: 'number' },
-            created_at: { type: 'string', format: 'date-time' },
-            qr_code: { type: 'string' },
-            id_rpp: { type: 'string' },
-            isdeleted: { type: 'boolean' },
-            code_user: { type: 'string' },
-            image: { type: 'string' },
-            schema: { type: 'string' },
-          },
-        },
-        Ticket: {
-          type: 'object',
-          properties: {
-            id: { type: 'string', format: 'uuid' },
-            title: { type: 'string' },
-            type: { type: 'string' },
-            description: { type: 'string' },
-            iduser: { type: 'string', format: 'uuid' },
-            publishdate: { type: 'string', format: 'date-time' },
-            affectdate: { type: 'string', format: 'date-time' },
-            resolvedate: { type: 'string', format: 'date-time' },
-            assignedagent: { type: 'string', format: 'uuid' },
-            priority: { type: 'string', enum: ['low', 'medium', 'high'] },
-            difficulty: { type: 'string', enum: ['low', 'medium', 'high'] },
-            status: { type: 'string', enum: ['open', 'in_progress', 'resolved', 'closed'] },
-            created_at: { type: 'string', format: 'date-time' },
-            updated_at: { type: 'string', format: 'date-time' },
-            user: { $ref: '#/components/schemas/User' },
-            agent: { $ref: '#/components/schemas/User' },
-          },
-        },
-        Role: {
-          type: 'object',
-          properties: {
-            id: { type: 'string', format: 'uuid' },
-            name: { type: 'string' },
-            description: { type: 'string' },
-            created_at: { type: 'string', format: 'date-time' },
-          },
-        },
-        AuthResponse: {
-          type: 'object',
-          properties: {
-            user: { $ref: '#/components/schemas/User' },
-            token: { type: 'string' },
-            message: { type: 'string' },
-          },
-        },
         Error: {
           type: 'object',
           properties: {
@@ -120,7 +60,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Increase payload size limit for file uploads
 app.use(express.urlencoded({ extended: true }));
 
 // Swagger UI
@@ -139,13 +79,21 @@ app.use('/roles', roleRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Ticket Management Backend is running' });
+  res.json({
+    status: 'OK',
+    message: 'Ticket Management Backend is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error('Error:', err.stack);
+  res.status(500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong!'
+  });
 });
 
 // 404 handler
