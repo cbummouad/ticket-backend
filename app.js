@@ -9,6 +9,8 @@ const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
+const app = express();
+
 // Conditionally set up Socket.IO only if not in serverless environment (e.g., Vercel)
 let server, io;
 if (!process.env.VERCEL) {
@@ -23,8 +25,6 @@ if (!process.env.VERCEL) {
     }
   });
 }
-
-const app = express();
 
 const PORT = process.env.PORT || 3000;
 
