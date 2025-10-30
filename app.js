@@ -162,7 +162,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-module.exports = { app, server };
+module.exports = app;
 
 // Start server if this file is run directly (only if not in serverless)
 if (require.main === module && !process.env.VERCEL) {
