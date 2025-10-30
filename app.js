@@ -69,9 +69,15 @@ const swaggerOptions = {
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
+const AllowedCors = ['http://localhost:5173', 'https://ticket-backend-sepia.vercel.app'];
 
 // Middleware
-app.use(cors());
+app.use(cors(
+
+  {
+    origin : AllowedCors
+  })
+);
 app.use(express.json({ limit: '10mb' })); // Increase payload size limit for file uploads
 app.use(express.urlencoded({ extended: true }));
 
