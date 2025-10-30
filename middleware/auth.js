@@ -27,6 +27,33 @@ const auth = async (req, res, next) => {
   }
 };
 
+// WebSocket authentication middleware
+const authenticateSocket = async (socket, token) => {
+  try {
+    if (!token) {
+      throw new Error('No token provided');
+    }
+
+    // Verify the Supabase session token
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      throw new Error('Invalid token');
+    }
+
+    socket.userId = user.id;
+    socket.user = {
+      id: user.id,
+      email: user.email
+    };
+
+    return true;
+  } catch (error) {
+    console.error('Socket authentication error:', error.message);
+    return false;
+  }
+};
+
 // Middleware to check if user has admin role
 const requireAdmin = async (req, res, next) => {
   try {
@@ -49,4 +76,4 @@ const requireAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { auth, requireAdmin };
+module.exports = { auth, requireAdmin, authenticateSocket };

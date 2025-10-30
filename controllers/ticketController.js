@@ -1,4 +1,5 @@
 const Ticket = require('../models/Ticket');
+const Notification = require('../models/Notification');
 
 const ticketController = {
   // Get all tickets
@@ -70,6 +71,31 @@ const ticketController = {
         status: status || 'open'
       });
       const savedTicket = await ticket.save();
+
+      // Send notification to assigned agent if specified
+      if (assignedagent) {
+        try {
+          await Notification.create(
+            assignedagent,
+            'New Ticket Assigned',
+            `A new ticket "${title}" has been assigned to you.`,
+            'info',
+            { ticketId: savedTicket.id, type: 'ticket_assigned' }
+          );
+
+          // Emit WebSocket notification
+          const io = req.app.get('io');
+          io.to(`user_${assignedagent}`).emit('notification', {
+            type: 'ticket_assigned',
+            title: 'New Ticket Assigned',
+            message: `A new ticket "${title}" has been assigned to you.`,
+            data: { ticketId: savedTicket.id }
+          });
+        } catch (notificationError) {
+          console.error('Error sending notification:', notificationError);
+        }
+      }
+
       res.status(201).json(savedTicket);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -150,6 +176,28 @@ const ticketController = {
 
       // Fetch the updated ticket with user/agent data
       const updatedTicket = await Ticket.findById(id);
+
+      // Send notification to the assigned agent
+      try {
+        await Notification.create(
+          agentId,
+          'Ticket Assigned',
+          `Ticket "${updatedTicket.title}" has been assigned to you.`,
+          'info',
+          { ticketId: id, type: 'ticket_assigned' }
+        );
+
+        // Emit WebSocket notification
+        const io = req.app.get('io');
+        io.to(`user_${agentId}`).emit('notification', {
+          type: 'ticket_assigned',
+          title: 'Ticket Assigned',
+          message: `Ticket "${updatedTicket.title}" has been assigned to you.`,
+          data: { ticketId: id }
+        });
+      } catch (notificationError) {
+        console.error('Error sending notification:', notificationError);
+      }
 
       res.json({
         message: 'Ticket assigned successfully',

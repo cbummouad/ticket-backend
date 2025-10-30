@@ -66,6 +66,7 @@ const authController = {
       res.status(201).json({
         user: savedUser,
         session: authData.session,
+        
         message: 'User registered successfully'
       });
     } catch (error) {
